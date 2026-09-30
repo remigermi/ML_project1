@@ -202,3 +202,35 @@ def ridge_regression(y, tx, lambda_):
     N,D = tx.shape
     w = np.dot(np.linalg.inv(tx.T @ tx + 2*N*lambda_*np.eye(D)),tx.T @ y)
     return w
+
+def logistic_function(x):
+    return np.exp(x)/(1+np.exp(x))
+
+def logistic_gradient(y,tx,w):
+    N=y.size
+    return tx.T@(logistic_function(tx@w)-y)/N
+
+def logistic_loss(y,tx,w):
+    N=y.size
+    loss = np.mean( -(tx@w)*y+np.log(1+np.exp(tx@w)) )
+    return loss
+
+def logistic_regression(y, tx, initial_w,max_iters, gamma):
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute  gradient
+        grad = logistic_gradient(y,tx,w)
+        # update w by gradient descent
+        w = w - gamma * grad
+    loss = logistic_loss(y,tx,w)
+    return w, loss
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute  gradient
+        grad = logistic_gradient(y,tx,w)+2*lambda_*w
+        # update w by gradient descent
+        w = w - gamma * grad
+    loss = logistic_loss(y,tx,w)
+    return w, loss
